@@ -1,0 +1,28 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar arquivos
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extrair projeto
+        run: |
+          unzip -o Cheat_Onofre_projeto.zip -d projeto
+          find projeto -name gradlew -type f
+
+      - name: Compilar APK
+        run: |
+          cd projeto
+          chmod +x gradlew
+          ./gradlew assembleDebug
