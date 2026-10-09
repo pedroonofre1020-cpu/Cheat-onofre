@@ -20,16 +20,21 @@ jobs:
       - name: Extrair projeto
         run: |
           unzip -o Cheat_Onofre_projeto.zip -d projeto
-          find projeto -maxdepth 4 -type f | head -100
+          find projeto -name settings.gradle -o -name settings.gradle.kts
+          find projeto -name gradlew
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
 
       - name: Compilar APK
         run: |
-          cd projeto
-          find . -name gradlew -type f
-          if [ -f gradlew ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug
-          else
-            echo "Arquivo gradlew não encontrado na raiz do projeto."
-            exit 1
-          fi
+          cd projeto/Cheat_Onofre
+          gradle assembleDebug
+
+      - name: Salvar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cheat-Onofre-APK
+          path: projeto/Cheat_Onofre/app/build/outputs/apk/debug/*.apk
