@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Baixar arquivos
         uses: actions/checkout@v4
@@ -19,10 +20,16 @@ jobs:
       - name: Extrair projeto
         run: |
           unzip -o Cheat_Onofre_projeto.zip -d projeto
-          find projeto -name gradlew -type f
+          find projeto -maxdepth 4 -type f | head -100
 
       - name: Compilar APK
         run: |
           cd projeto
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          find . -name gradlew -type f
+          if [ -f gradlew ]; then
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          else
+            echo "Arquivo gradlew não encontrado na raiz do projeto."
+            exit 1
+          fi
